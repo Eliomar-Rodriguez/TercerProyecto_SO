@@ -1,12 +1,15 @@
 package HttpUserServiceAPI;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by kembl on 14/11/2018.
  */
 
 public class User {
-    private String username;
-    private String password;
+    @SerializedName("username") @Expose private String username;
+    @SerializedName("password") @Expose private String password;
 
     public User(String username, String password) {
         this.username = username;

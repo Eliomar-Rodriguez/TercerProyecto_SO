@@ -26,4 +26,8 @@ public class RetrofitService {
         }
         return mInstance;
     }
+
+    public HttpUserService getServiceAPI(){
+        return mRetrofit.create(HttpUserService.class);
+    }
 }
