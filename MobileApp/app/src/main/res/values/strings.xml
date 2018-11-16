@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Chatcito</string>
+    <string name="autenticationFailed">Este usuario no existe en la base de datos</string>
+    <string name="userKey">usernameKey</string>
+</resources>
