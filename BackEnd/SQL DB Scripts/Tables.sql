@@ -1,0 +1,25 @@
+CREATE TABLE Users(
+	ID			INT IDENTITY(1,1),
+	UserName	VARCHAR(50)	NOT NULL UNIQUE,
+	Contrasenia	VARCHAR(50) NOT NULL,
+
+	CONSTRAINT PK_Users_ID PRIMARY KEY CLUSTERED (ID)
+);
+
+
+CREATE TABLE ChatMessages(
+	ID				INT IDENTITY(1,1),
+	QueueName		VARCHAR(50)		NOT NULL,
+	TextMessage		VARCHAR(500)	NOT NULL,
+	ID_Emiter		INT				NOT NULL,
+	ID_Receiver		INT				NOT NULL,
+
+	CONSTRAINT PK_ChatMessages_ID PRIMARY KEY CLUSTERED (ID),
+
+	CONSTRAINT FK_Users_ID_Emiter	FOREIGN KEY (ID_Emiter) 
+		REFERENCES	dbo.Users (ID),
+
+	CONSTRAINT FK_Users_ID_Receiver	FOREIGN KEY (ID_Receiver) 
+		REFERENCES	dbo.Users (ID)
+);
+

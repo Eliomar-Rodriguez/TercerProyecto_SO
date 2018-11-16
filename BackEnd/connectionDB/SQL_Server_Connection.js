@@ -5,7 +5,7 @@ var Connection = require('tedious').Connection; // libreria necesaria para conec
 >   Configuraciones de conección a la base de datos sql server.     <
 =====================================================================
 */
-var config = { // cambia cuando se monte en el servidor
+var config = { 
     userName: 'administrador',
     password: 'Pass1234',
     server: 'sistemasoperativos.database.windows.net', // direccion del servidor

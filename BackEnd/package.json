@@ -9,10 +9,12 @@
   "author": "Eliomar Rodriguez",
   "license": "ISC",
   "dependencies": {
+    "azure-sb": "^0.10.6",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "helmet": "^3.15.0",
     "hotnode": "0.0.8",
+    "path": "^0.12.7",
     "tedious": "^3.0.1"
   }
 }

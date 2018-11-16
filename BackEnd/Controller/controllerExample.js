@@ -1,24 +1,14 @@
-var logica = require('../Logic/logicExample')
-exports.post = function(request, response){
-    logica.insertSomething(request.body, (data) => {
+var logica = require('../Logic/logic')
+//var azureFunctions = require('../Controller/AzureBusService')
+
+exports.newMessage = function(request, response){
+    logica.newMessage(request.body, function(data) {
         response.send(data);
     })
 }
 
-exports.put = function(request, response){
-    logica.putSomething(request.body, (data) => {
-        response.send(data);
-    })
-}
-
-exports.select = function(request, response){
-    logica.selectSomething((data) => {
-        response.send(data);
-    })
-}
-
-exports.delete = function(request, response){
-    logica.deleteSomething(request.query, (data) => {
+exports.allUsers = function(request, response){
+    logica.selectAllUsers(function(data) {
         response.send(data);
     })
 }

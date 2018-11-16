@@ -1,10 +1,11 @@
 const sqlServerConnection = require('../connectionDB/SQL_Server_Connection')
+const azure = require('../Controller/AzureBusService')
 var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 
-exports.insertSomething = function(datos, callback){
+exports.newMessage = function(datos, callback){
     try {
-        var request = new Request('insert_StoreProcedure', function(err) {
+        var request = new Request('newMessage', function(err) {
             if (err) {
                 var msg = (request.error == 1) ? "Error de conexión" : "No se puede insertar el registro";
                 callback({
@@ -16,7 +17,10 @@ exports.insertSomething = function(datos, callback){
                 })
             }
         });
-        request.addParameter('name', TYPES.Int, datos.name);
+        request.addParameter('queueName', TYPES.VarChar, datos.queueName);
+        request.addParameter('textMessage', TYPES.VarChar, datos.textMessage);
+        request.addParameter('ID_Emiter', TYPES.Int, datos.ID_Emiter);
+        request.addParameter('ID_Receiver', TYPES.Int, datos.ID_Receiver);
         
         request.addOutputParameter('success', TYPES.Bit);
     
@@ -27,20 +31,12 @@ exports.insertSomething = function(datos, callback){
     }
 };
 
-exports.putSomething = function(request, response){
-    
-};
-
-exports.selectSomething = function(request, response){
-    
-};
-
-exports.deleteSomething = function(request, response){
+exports.selectAllUsers = function(callback){
     try {
-        var query = 'DELETE FROM XTabla WHERE ID = ' + request.ID;
-        var request = new Request('insert_StoreProcedure', function(err) {
+        var query = 'SELECT username FROM Users';
+        var request = new Request(query, function(err) {
             if (err) {
-                var msg = (request.error == 1) ? "Error de conexión" : "No se puede eliminar el registro";
+                var msg = (request.error == 1) ? "Error de conexión" : "No se encontraron registros";
                 callback({
                     success: false,
                     error: request.error,
