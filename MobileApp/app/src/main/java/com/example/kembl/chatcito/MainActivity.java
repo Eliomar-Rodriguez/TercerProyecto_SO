@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         username = findViewById(R.id.usernameTxt);
         password = findViewById(R.id.passwordTxt);
         loginAction = findViewById(R.id.loginBtn);
-        apiService = RetrofitService.getInstance().getServiceAPI();
+        //apiService = RetrofitService.getInstance().getServiceAPI();
         users = new ArrayList<>();
 
         //meanwhile
@@ -57,17 +57,16 @@ public class MainActivity extends AppCompatActivity {
         loginAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(autenticationFromAPI(username.getText().toString(), password.getText().toString()))
-                    startChatListActivity(username.getText().toString());
-                 Toast.makeText(getApplicationContext(), R.string.autenticationFailed, Toast.LENGTH_LONG).show();
+                if(autenticationFromAPI(username.getText().toString(), password.getText().toString())) startChatListActivity(username.getText().toString());
+                else Toast.makeText(getApplicationContext(), R.string.autenticationFailed, Toast.LENGTH_LONG).show();
             }
         });
     }
 
     public void startChatListActivity(String keyUsername){
-        Intent intent = new Intent(MainActivity.this, ChatListActivity.class);
+        Intent intent = new Intent(this, ChatListActivity.class);
         intent.putExtra(getString(R.string.userKey), keyUsername);
-        MainActivity.this.startActivity(intent);
+        startActivity(intent);
     }
 
     //quemados
