@@ -3,42 +3,75 @@
     <mat-toolbar>{{ userInfo.name }} (@{{ userInfo.id }})</mat-toolbar>
     <div id="usersContainer">
       <mat-nav-list>
-        <span *ngFor="let user of Object.keys(users)">
+        <span *ngFor="let user of Object.keys(_Backend.users)">
           <a
             mat-list-item
             *ngIf="user != userInfo.id"
             (click)="selectUser(user)"
           >
-            {{ users[user].name }} (@{{ user }})
+            {{ _Backend.users[user].name }} (@{{ user }})
           </a>
         </span>
       </mat-nav-list>
     </div>
-    <mat-nav-list> <a mat-list-item [routerLink]="['']" style="background-color:darkgray;bottom:0;position:absolute"> Logout </a> </mat-nav-list>
+    <mat-nav-list style="bottom:0;position:absolute;width: 100%">
+      <mat-toolbar
+        mat-list-item
+        *ngIf="activeUser != ''"
+        style="background-color:darkgray;"
+      >
+        <mat-form-field style="height:80%;width: 100%">
+          <input
+            matInput
+            [(ngModel)]="Contador"
+            placeholder="Mensajes por lotes"
+            type="number"
+          />
+        </mat-form-field>
+      </mat-toolbar>
+      <mat-toolbar
+        mat-list-item
+        *ngIf="activeUser != '' && Contador > 0 && Contador < maxCounter"
+        style="background-color:darkgray;"
+      >
+        <button style="width:100%;height:100%" mat-button (click)="sendLot(Contador)">
+          Enviar {{ Contador }} mensajes a {{ activeUser }}!
+        </button>
+      </mat-toolbar>
+      <a mat-list-item [routerLink]="['']" style="background-color:darkgray;">
+        Logout
+      </a>
+    </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
     <span *ngIf="activeUser != '' && activeUser != userInfo.id">
       <mat-toolbar style="background-color:darkgrey">{{
-        users[activeUser].name
+        _Backend.users[activeUser].name
       }}</mat-toolbar>
-      <ng-container *ngFor="let message of chats[activeUser]">
+      <div
+        ng-container
+        *ngIf="_Backend.chats[activeUser] != undefined"
+        style="max-height:70%; overflow-y: auto"
+        id="chatLog"
+      >
         <mat-card
+          *ngFor="let message of _Backend.chats[activeUser]"
           class="msg"
           [ngStyle]="{
             'margin-left': message.id == userInfo.id ? 'auto' : '5px',
-            'background-color': message.id == userInfo.id ? '#f5f5f5' : '#FFF'
+            'background-color': message.id == userInfo.id ? '#a5c7ff' : '#FFF'
           }"
         >
           {{ message.text }}
         </mat-card>
-      </ng-container>
+      </div>
 
       <mat-form-field id="chatInput">
         <textarea
           style="height:100%"
           matInput
-          placeholder="{{500-users[activeUser].text.length}}"
-          [(ngModel)]="users[activeUser].text"
+          placeholder="{{500-_Backend.users[activeUser].text.length}}"
+          [(ngModel)]="_Backend.users[activeUser].text"
         ></textarea>
       </mat-form-field>
       <button

@@ -1,54 +1,59 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
+import { BackendService } from "../backend.service";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-main-view',
-  templateUrl: './main-view.component.html',
-  styleUrls: ['./main-view.component.css']
+  selector: "app-main-view",
+  templateUrl: "./main-view.component.html",
+  styleUrls: ["./main-view.component.css"]
 })
 export class MainViewComponent implements OnInit {
   Object = Object;
-  users = {
-    lazuli26: { name: 'Alberth' },
-    elior: { name: 'Eliomar' },
-    kemqa: { name: 'Kembly' }
-  };
-  chats = {
-    elior: [
-      { id: 'lazuli26', text: 'hola' },
-      { id: 'lazuli26', text: 'hola' },
-      { id: 'elior', text: 'hola mundo' },
-      { id: 'elior', text: 'hola mundo' },
-      { id: 'lazuli26', text: 'hola' },
-      { id: 'elior', text: 'hola mundo' },
-      { id: 'lazuli26', text: 'hola' },
-      { id: 'elior', text: 'hola mundo' }
-    ],
-    kemqa: [
-      { id: 'lazuli26', text: 'holi' },
-      { id: 'lazuli26', text: 'holi' },
-      { id: 'kemqa', text: 'holota' },
-      { id: 'kemqa', text: 'holota' },
-      { id: 'lazuli26', text: 'holi' },
-      { id: 'kemqa', text: 'holota' },
-      { id: 'lazuli26', text: 'holi' },
-      { id: 'kemqa', text: 'holota' }
-    ]
-  };
-  userInfo = {
-    id: 'lazuli26',
-    name: 'Alberth Salas'
-  };
-  constructor() {}
-  activeUser = '';
+  Contador = 0;
+  maxCounter = 10000;
+  userInfo;
+  constructor(private _Backend: BackendService, private _Router: Router) {
+    this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    if (this.userInfo === null) {
+      this._Router.navigate([""]);
+    }
+    this._Backend.getUsers();
+    this._Backend.getChats(this.userInfo.id);
+  }
+  activeUser = "";
   selectUser(user) {
-    if (this.users[user].text === undefined) {
-      this.users[user].text = '';
+    if (this._Backend.users[user].text === undefined) {
+      this._Backend.users[user].text = "";
     }
     this.activeUser = user;
+    this._Backend.getChat(this.userInfo.id, this.activeUser);
+    this.scroll();
   }
   send() {
-    console.log(this.users[this.activeUser].text);
-    this.users[this.activeUser].text = '';
+    this._Backend.sendMsg(
+      this.userInfo.id,
+      this.activeUser,
+      this._Backend.users[this.activeUser].text
+    );
+    this._Backend.users[this.activeUser].text = "";
+  }
+  sendLot(C) {
+    for (let index = 0; index < C; index++) {
+      this._Backend.sendMsg(
+        this.userInfo.id,
+        this.activeUser,
+        "Message #" + (index + 1) + ", " + new Date().toLocaleString()
+      );
+      if (index == C - 1) this.scroll();
+    }
+  }
+  scroll() {
+    const chatLog = document.getElementById("chatLog");
+    if (chatLog != null) {
+      document.getElementById("chatLog").scrollTop = document.getElementById(
+        "chatLog"
+      ).scrollHeight;
+    }
   }
   ngOnInit() {}
 }

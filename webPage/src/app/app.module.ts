@@ -16,6 +16,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
+import { BackendService } from './backend.service';
 const appRoutes: Routes = [
   { path: 'main', component: MainViewComponent },
   { path: '', component: LoginComponent },
@@ -38,7 +39,7 @@ const appRoutes: Routes = [
     CommonModule
   ],
   exports: [MatInputModule, MatCardModule, MatButtonModule],
-  providers: [],
+  providers: [BackendService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
