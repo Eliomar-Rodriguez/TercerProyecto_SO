@@ -35,7 +35,8 @@
             android:layout_gravity="center"
             android:scaleType="fitCenter"
             android:padding="20dp"
-            android:onClick="sendMessage"
+            android:onClick="WorksAlertDialog"
             android:background="@drawable/ic_send_black_24dp"/>
+
     </LinearLayout>
 </LinearLayout>
