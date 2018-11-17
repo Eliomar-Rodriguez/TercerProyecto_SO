@@ -154,6 +154,7 @@ exports.callProcedure = function (request, callback) {
                 console.log('\n>>>\nRESPONSE:');
                 console.log(res);
                 console.log('>>>');
+                
                 if (parameterName === 'success' && (value === 1 || value === true)) {
                     callback({
                         success: true,

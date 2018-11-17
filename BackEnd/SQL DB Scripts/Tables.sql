@@ -9,7 +9,6 @@ CREATE TABLE Users(
 
 CREATE TABLE ChatMessages(
 	ID				INT IDENTITY(1,1),
-	QueueName		VARCHAR(50)		NOT NULL,
 	TextMessage		VARCHAR(500)	NOT NULL,
 	ID_Emiter		INT				NOT NULL,
 	ID_Receiver		INT				NOT NULL,

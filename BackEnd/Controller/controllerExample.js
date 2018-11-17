@@ -12,3 +12,15 @@ exports.allUsers = function(request, response){
         response.send(data);
     })
 }
+
+exports.getAllMessages = function(request, response){
+    logica.getAllMessages(function(data) {
+        response.send(data);
+    })
+}
+
+exports.login = function(request, response){
+    logica.login(request.body, function(data) {
+        response.send(data);
+    })
+}

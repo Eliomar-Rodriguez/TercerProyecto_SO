@@ -45,7 +45,8 @@ app.use(function(req, res, next) {
 
 app.post('/sendMessage', controller.newMessage);
 app.get('/allUsers', controller.allUsers);
-app.get('/getMessagesChat', controller.allUsers);
+app.post('/getMessagesChat', controller.getAllMessages);
+app.post('/login', controller.login);
 
 /*
 ======================================================================================
