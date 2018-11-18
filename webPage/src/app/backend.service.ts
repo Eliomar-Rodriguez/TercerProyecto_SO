@@ -64,7 +64,7 @@ export class BackendService {
       })
       .subscribe(data => {
         this.chats[remoteID] = [];
-        if (data["data"])
+        if (data['success'] && data["data"])
           data["data"].forEach(element => {
             this.chats[remoteID].push({
               id: element.ID_Emiter,
