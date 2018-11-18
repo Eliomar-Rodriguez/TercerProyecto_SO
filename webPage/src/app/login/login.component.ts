@@ -1,23 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { BackendService } from '../backend.service'; // Se importa el servicio de backend para uso del login
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  // user contiene los datos de los campos de texto
   user = {
     id: '',
     pass: ''
   };
-  userInfo = {
-    name: '',
-    id: ''
-  };
-  constructor(private router: Router) {}
+  // El constructor define instancias del BackendService y el Router
+  constructor(private _Backend: BackendService) {}
+  // La unica funcion contenida se encarga de realizar el proceso de autenticacion en conjunto con el servicio de backend
   public login() {
-    this.router.navigate(['/main']);
-    localStorage.setItem('userInfo', JSON.stringify({id: 'lazuli26', name: 'Alberth Salas'}));
+    this._Backend.login(this.user.id, this.user.pass);
   }
 
   ngOnInit() {}

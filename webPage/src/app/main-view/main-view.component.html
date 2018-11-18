@@ -1,59 +1,61 @@
-<mat-sidenav-container>
-  <mat-sidenav mode="side" opened>
-    <mat-toolbar>{{ userInfo.name }} (@{{ userInfo.id }})</mat-toolbar>
-    <div id="usersContainer">
-      <mat-nav-list>
-        <span *ngFor="let user of Object.keys(_Backend.users)">
+<mat-sidenav-container> <!--Contenedor principal de la pagina-->
+  <mat-sidenav mode="side" opened> <!--Barra lateral-->
+    <mat-toolbar>{{ userInfo.name }} (@{{ userInfo.id }})</mat-toolbar> <!--Información del usuario actual sobre la barra-->
+      <mat-nav-list> <!--Contenedor de la lista de usuarios obtenidos desde la base de datos-->
+        <span *ngFor="let user of Object.keys(_Backend.users)"> <!--Este elemento se replica por cada usuario obtenido-->
           <a
             mat-list-item
             *ngIf="user != userInfo.id"
             (click)="selectUser(user)"
-          >
+          > <!--Este elemento solo es visible si su ID es distinta a la actual, esto para evitar enviar mensajes a si mismo-->
             {{ _Backend.users[user].name }} (@{{ user }})
           </a>
         </span>
       </mat-nav-list>
-    </div>
-    <mat-nav-list style="bottom:0;position:absolute;width: 100%">
+    <mat-nav-list style="bottom:0;position:absolute;width: 100%"> <!--Contenedor de los elementos ubicados en la parte baja de la barra lateral-->
       <mat-toolbar
         mat-list-item
         *ngIf="activeUser != ''"
         style="background-color:darkgray;"
-      >
+      > <!--Este componente solo es visible cuando hay un usuario seleccionado-->
         <mat-form-field style="height:80%;width: 100%">
           <input
             matInput
             [(ngModel)]="Contador"
             placeholder="Mensajes por lotes"
             type="number"
-          />
+          /> <!--Contador para el envío por lotes de mensajes-->
         </mat-form-field>
       </mat-toolbar>
       <mat-toolbar
         mat-list-item
         *ngIf="activeUser != '' && Contador > 0 && Contador < maxCounter"
         style="background-color:darkgray;"
-      >
-        <button style="width:100%;height:100%" mat-button (click)="sendLot(Contador)">
+      > <!--Este componente contiene el botón para enviar un lote de mensajes a un destinatario, solo es visible cuando se ha seleccionado un usuario activo y el numero de mensajes a enviar no excede el limite-->
+        <button
+          style="width:100%;height:100%"
+          mat-button
+          (click)="sendLot(Contador)"
+        >
           Enviar {{ Contador }} mensajes a {{ activeUser }}!
         </button>
-      </mat-toolbar>
+      </mat-toolbar> <!--Este contenedor tiene la función de permitir al usuario salir a la pantalla de inicio de sesión-->
       <a mat-list-item [routerLink]="['']" style="background-color:darkgray;">
         Logout
       </a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
-    <span *ngIf="activeUser != '' && activeUser != userInfo.id">
+  <mat-sidenav-content> <!--Posee la vista de chats y de envío de mensajes-->
+    <span *ngIf="activeUser != '' && activeUser != userInfo.id"> <!--Este componente no es visible si no se tiene seleccionado a un usuario distinto al usuario local-->
       <mat-toolbar style="background-color:darkgrey">{{
         _Backend.users[activeUser].name
-      }}</mat-toolbar>
+      }}</mat-toolbar> <!--Muestra el destinatario sobre la conversación actual-->
       <div
         ng-container
         *ngIf="_Backend.chats[activeUser] != undefined"
         style="max-height:70%; overflow-y: auto"
         id="chatLog"
-      >
+      > <!--Contiene la vista de chat-->
         <mat-card
           *ngFor="let message of _Backend.chats[activeUser]"
           class="msg"
@@ -61,24 +63,24 @@
             'margin-left': message.id == userInfo.id ? 'auto' : '5px',
             'background-color': message.id == userInfo.id ? '#a5c7ff' : '#FFF'
           }"
-        >
+        > <!--Una tarjeta que se replica por cada mensaje en la conversación y muestra el contenido del mensaje, además de alinearse a la derecha o a la izquierda, según el emisor del mensaje-->
           {{ message.text }}
         </mat-card>
       </div>
 
-      <mat-form-field id="chatInput">
+      <mat-form-field id="chatInput"> <!--Formulario para enviar un mensaje de texto-->
         <textarea
           style="height:100%"
           matInput
           placeholder="{{500-_Backend.users[activeUser].text.length}}"
           [(ngModel)]="_Backend.users[activeUser].text"
-        ></textarea>
+        ></textarea> <!--El contenido de esta caja de texto cambia y edita el chat del usuario seleccionado-->
       </mat-form-field>
       <button
         mat-button
         style="margin-left: 5%; width: 10%; background-color: darkgray ; color: white"
         (click)="send()"
-      >
+      > <!--Boton para enviar el mensaje-->
         Enviar
       </button>
     </span>
