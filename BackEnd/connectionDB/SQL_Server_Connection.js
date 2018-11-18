@@ -36,77 +36,84 @@ connection.on('connect', function(err) {
  * @param {function} callback
  */
 exports.executeRequest = function(request, callback) {
-    'use strict';
-    var res = [],
-        connection = new Connection(config);
+    try {
+        'use strict';
+        var res = [],
+            connection = new Connection(config);
 
-    connection.on('connect', function(err) {
-        if (err) {
-            callback({
-                success: false,
-                data: err.message,
-                error: SIN_CONEXION,
+        connection.on('connect', function(err) {
+            if (err) {
+                callback({
+                    success: false,
+                    data: err.message,
+                    error: SIN_CONEXION,
+                });
+                return;
+            }
+            
+            request.on('row', function(columns) { // si devuelve datos llena res[]
+                var row = {};
+                columns.forEach(function(column) {
+                    if (column.value === null) {
+                        console.log('NULL');
+                    } else {
+                        row[column.metadata.colName] = column.value;
+                    }
+                });
+                res.push(row);
             });
-            return;
-        }
-        
-        request.on('row', function(columns) { // si devuelve datos llena res[]
-            var row = {};
-            columns.forEach(function(column) {
-                if (column.value === null) {
-                    console.log('NULL');
+
+            request.on('returnValue', function(parameterName, value, metadata) {
+                //console.log('\n>>>\nRESPONSE returnValue:');
+                //console.log(res);
+                //console.log(parameterName);
+                //console.log(value);
+                //console.log('>>>');
+                if (parameterName === 'success' && (value === 1 || value === true)) {
+                    callback({
+                        success: true,
+                        data: res,
+                        error: 200
+                    });
                 } else {
-                    row[column.metadata.colName] = column.value;
-                }
+                    callback({
+                        success: false,
+                        data: [],
+                        error: 400
+                    });
+                };
             });
-            res.push(row);
-        });
 
-        request.on('returnValue', function(parameterName, value, metadata) {
-            console.log('\n>>>\nRESPONSE:');
-            console.log(res);
-            console.log('>>>');
-            if (parameterName === 'success' && (value === 1 || value === true)) {
+            /**
+             * estos dos tipos de evento done se usan ya que hay ocaciones en la que se captura el evento doneProc o el done luego de ejecutar una consulta
+             */        
+            request.on('done', function (rowCount, more, rows) { // si el tipo de exito es done llena callback
+                //console.log('\n>>>\nRESPONSE done:');
+                //console.log(res);
+                //console.log('>>>');
                 callback({
                     success: true,
                     data: res,
                     error: 200
-                });
-            } else {
+                }); 
+            });
+
+            request.on('doneProc', function (rowCount, more, rows) { // si el tipo de exito es doneProc llena callback
+                //console.log('\n>>>\nRESPONSE doneProc:');
+                //console.log(res);
+                //console.log('>>>');
                 callback({
-                    success: false,
-                    data: [],
-                    error: 400
-                });
-            };
+                    success: true,
+                    data: res,
+                    error: 200
+                }); 
+            });
+            connection.execSql(request);
         });
-
-        /**
-         * estos dos tipos de evento done se usan ya que hay ocaciones en la que se captura el evento doneProc o el done luego de ejecutar una consulta
-         */        
-        request.on('done', function (rowCount, more, rows) { // si el tipo de exito es done llena callback
-            console.log('\n>>>\nRESPONSE:');
-            console.log(res);
-            console.log('>>>');
-            callback({
-                success: true,
-                data: res,
-                error: 200
-            }); 
-        });
-
-        request.on('doneProc', function (rowCount, more, rows) { // si el tipo de exito es doneProc llena callback
-            console.log('\n>>>\nRESPONSE:');
-            console.log(res);
-            console.log('>>>');
-            callback({
-                success: true,
-                data: res,
-                error: 200
-            }); 
-        });
-        connection.execSql(request);
-    });
+    } catch (error) {
+        console.log('Error:' + error);
+    }
+    
 };
 
 /**
@@ -149,23 +156,56 @@ exports.callProcedure = function (request, callback) {
             /**
              * evento que captura la respuesta de lo ocurrido en la base de datos
              */
-            request.on('returnValue', function(parameterName, value, metadata) {
-                connection.close();
-                console.log('\n>>>\nRESPONSE:');
+            /*request.on('returnValue', function(parameterName, value, metadata) {
+                console.log('\n>>>\nRESPONSE returnValue:');
                 console.log(res);
+                console.log(parameterName);
+                console.log(value);
                 console.log('>>>');
-                
                 if (parameterName === 'success' && (value === 1 || value === true)) {
                     callback({
                         success: true,
                         data: res,
-                        error:200
+                        error: 200
                     });
                 } else {
                     callback({
                         success: false,
                         data: [],
-                        error:400
+                        error: 400
+                    });
+                };
+            });*/
+    
+            /**
+             * estos dos tipos de evento done se usan ya que hay ocaciones en la que se captura el evento doneProc o el done luego de ejecutar una consulta
+             */        
+            request.on('done', function (rowCount, more, rows) { // si el tipo de exito es done llena callback
+                //console.log('\n>>>\nRESPONSE done:');
+                //console.log(res);
+                //console.log('>>>');
+                callback({
+                    success: true,
+                    data: res[0],
+                    error: 200
+                }); 
+            });
+    
+            request.on('doneProc', function (rowCount, more, rows) { // si el tipo de exito es doneProc llena callback
+                //console.log('\n>>>\nRESPONSE doneProc:');
+                //console.log(res);
+                //console.log('>>>');
+                if (res[0].success) {
+                    callback({
+                        success: true,
+                        data: res,
+                        error: 200
+                    });
+                } else {
+                    callback({
+                        success: false,
+                        data: [],
+                        error: 400
                     });
                 };
             });

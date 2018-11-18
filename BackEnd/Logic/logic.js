@@ -7,7 +7,6 @@ var azure = require('../Controller/AzureBusService')
  */
 exports.selectAllUsers = function(callback) {
     consultsPreparer.selectAllUsers(function(response) {
-        var msg = (response.error == 1) ? "Error de conexión" : "Error al seleccionar usuarios.";
         if (response.success) {
             callback({
                 success: true,
@@ -20,7 +19,7 @@ exports.selectAllUsers = function(callback) {
         } else {
             callback({
                 success: false,
-                message: msg,
+                message: 'Error con la seleccion de los usuarios',
                 title: "Error",
                 error: response.error,
                 type: "error"
@@ -37,7 +36,6 @@ exports.selectAllUsers = function(callback) {
 exports.newMessage = function(datos, callback) { 
     azure.sendMessages('mensajes', datos, function(response) {
         if (response.success) {
-            console.log("Receive a message")
             callback({
                 success: true,
                 error: response.error,
@@ -47,7 +45,6 @@ exports.newMessage = function(datos, callback) {
                 type: "success"
             })
         } else {
-            console.log("RIP prro")
             callback({
                 success: false,
                 message: 'Error con la insercion',
@@ -60,11 +57,9 @@ exports.newMessage = function(datos, callback) {
 };
 
 
-exports.getAllMessages = function(callback) {
-    azure.checkForMessages('mensajes', function(response) {
-        console.log(response.data)
-        var msg = (response.error) ? "Error de conexión" : "Error al recuperar mensajes.";
-        if (!response.error) {
+exports.getAllMessages = function(datos, callback) {
+    consultsPreparer.getAllMessages(datos, function(response) {
+        if (response.success) {
             callback({
                 success: true,
                 title: "Selección exitosa",
@@ -75,7 +70,7 @@ exports.getAllMessages = function(callback) {
         } else {
             callback({
                 success: false,
-                message: msg,
+                message: 'Error al recuperar el mensaje',
                 title: "Error",
                 error: 'Error al recuperar mensajes',
                 type: "error"
@@ -86,9 +81,7 @@ exports.getAllMessages = function(callback) {
 
 exports.login = function(datos, callback) {
     consultsPreparer.login(datos, function(response) {
-        console.log(response)
-        var msg = (response.error == 1) ? "Error de conexión" : "Error al verificar el usuario.";
-        if (response.success) {
+        if (response.data[0].success !== -1) {
             callback({
                 success: true,
                 error: response.error,
@@ -100,9 +93,8 @@ exports.login = function(datos, callback) {
         } else {
             callback({
                 success: false,
-                message: msg,
+                message: 'Error, el usuario no existe o las credenciales son erroneas',
                 title: "Error",
-                error: response.error,
                 type: "error"
             })
         }

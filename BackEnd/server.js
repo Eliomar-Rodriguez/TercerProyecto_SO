@@ -30,9 +30,7 @@ var express = require('express'),
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.get('/',function(error,response) {
-    response.sendFile(path.resolve(__dirname + '/./Public/index.html'));
-  })
+app.use(express.static(path.join(__dirname, '/./Public')));
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -42,11 +40,13 @@ app.use(function(req, res, next) {
     next();
 });
 
-
-app.post('/sendMessage', controller.newMessage);
-app.get('/allUsers', controller.allUsers);
+app.post('/sendMessage', controller.newMessage); //funciona 100%
+app.get('/allUsers', controller.allUsers); // funciona 100%
 app.post('/getMessagesChat', controller.getAllMessages);
-app.post('/login', controller.login);
+app.post('/login', controller.login); // funciona 100%
+/*app.all('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/./Public/index.html'));
+});*/
 
 /*
 ======================================================================================
