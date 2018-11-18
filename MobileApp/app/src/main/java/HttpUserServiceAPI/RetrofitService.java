@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 //singleton class, need one instance only
 public class RetrofitService {
     private static RetrofitService mInstance;
-    private static final String BASE_URL = "";
+    private static final String BASE_URL = "http://172.24.94.78:8080/";
     private Retrofit mRetrofit;
 
     private RetrofitService() {

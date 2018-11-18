@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Chatcito</string>
     <string name="autenticationFailed">Este usuario no existe en la base de datos</string>
-    <string name="userKey">usernameKey</string>
+    <string name="myUsernameKey">usernameKey</string>
     <string name="receiverKey">receiverKey</string>
+    <string name="myIDKey">idKey</string>
+    <string name="receiverIDKey">receiverIdKey</string>
 </resources>
+
+

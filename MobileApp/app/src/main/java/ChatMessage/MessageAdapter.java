@@ -32,7 +32,7 @@ public class MessageAdapter extends BaseAdapter {
 
     public void add(Message message) {
         this.messages.add(message);
-        notifyDataSetChanged(); // to render the list we need to notify
+        notifyDataSetChanged();
     }
 
     @Override
@@ -60,16 +60,12 @@ public class MessageAdapter extends BaseAdapter {
         if (message.isBelongsToCurrentUser()) { // this message was sent by us so let's create a basic chat bubble on the right
             convertView = messageInflater.inflate(R.layout.my_message, null);
             holder.messageBody = convertView.findViewById(R.id.my_message_body);
-            convertView.setTag(holder);
-            holder.messageBody.setText(message.getText());
-
         } else { // this message was sent by someone else so let's create an advanced chat bubble on the left
             convertView = messageInflater.inflate(R.layout.their_message, null);
             holder.messageBody = convertView.findViewById(R.id.their_message_body);
-            convertView.setTag(holder);
-            holder.messageBody.setText(message.getText());
         }
-
+        convertView.setTag(holder);
+        holder.messageBody.setText(message.getText());
         return convertView;
     }
 }

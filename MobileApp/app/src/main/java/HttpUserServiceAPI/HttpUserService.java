@@ -4,6 +4,8 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 
@@ -12,15 +14,28 @@ import retrofit2.http.POST;
  */
 
 public interface HttpUserService {
-    @GET("allUsers") public Call<List<User>> getAllUsers();
 
-    @POST("login") public Call<Boolean> verifyUser(@Body User user);
+    @GET("allUsers") Call<ResponseData> getAllUsers();
 
-    /*
-    * @GET("/posts")
-    * public Call<List<Post>> getPostOfUser(@Query("userId") int id);
-    *
-    * @POST("/posts")
-    * public Call<Post> postData(@Body Post data);
-    */
+    @POST("login")
+    @FormUrlEncoded
+    Call<ResponseData> verifyLogin(
+            @Field("userName") String userName,
+            @Field("contrasenia") String contrasenia
+    );
+
+    @POST("getMessagesChat")
+    @FormUrlEncoded
+    Call<ResponseMessage> getMessagesChat(
+            @Field("ID_Emiter") int idEmitter,
+            @Field("ID_Receiver") int idReceiver
+    );
+
+    @POST("sendMessage")
+    @FormUrlEncoded
+    Call<ResponseMessage> sendMessage(
+            @Field("textMessage") String textMessage,
+            @Field("ID_Emiter") int idEmitter,
+            @Field("ID_Receiver") int idReceiver
+    );
 }
