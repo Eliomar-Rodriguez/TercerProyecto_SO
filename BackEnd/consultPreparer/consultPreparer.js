@@ -65,13 +65,18 @@ exports.getAllMessages = function(datos ,callback){
     var query = 'SELECT TextMessage, ID_Emiter, ID_Receiver FROM ChatMessages WHERE (ID_Emiter = '+datos.ID_Receiver+' AND ID_Receiver = '+datos.ID_Emiter+' ) OR (ID_Emiter = '+datos.ID_Emiter+' AND ID_Receiver = '+datos.ID_Receiver+' );'
     var request = new Request(query, function(err) {
         if (err) {
-            callback({
-                success: false,
-                error: request.error,
-                title: "Error",
-                message: "No se encontraron registros",
-                type: "error"
-            })
+            try {
+                callback({
+                    success: false,
+                    error: request.error,
+                    title: "Error",
+                    message: "No se encontraron registros",
+                    type: "error"
+                })
+            } catch (error) {
+                console.log(error)
+            }
+            
         }
     });
 
@@ -84,13 +89,18 @@ exports.login = function(datos, callback){
     var request = new Request('loginUsers', function(err) {
         console.log(err)
         if (err) {
-            callback({
-                success: false,
-                error: request.error,
-                title: "Error",
-                message: "No se encontraron registros",
-                type: "error"
-            })
+            try {
+                callback({
+                    success: false,
+                    error: request.error,
+                    title: "Error",
+                    message: "No se encontraron registros",
+                    type: "error"
+                })
+            } catch (error) {
+                console.log(error)
+            }
+            
         }
     });
     request.addParameter('userName', TYPES.VarChar, datos.userName);

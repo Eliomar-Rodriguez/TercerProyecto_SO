@@ -84,7 +84,7 @@ exports.login = function(datos, callback) {
         console.log("response!!!!")
         console.log(response)//|| (response.data && response.data[0].success !== -1)
         
-        if (response.data[0] && response.data[0].success !== -1) {
+        if (response.data && response.data[0].success !== -1) {
             console.log('TRUE')
             callback({
                 success: true,

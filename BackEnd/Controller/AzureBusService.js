@@ -9,13 +9,17 @@ setInterval(function() {
         var datos = null;
         if (!err) {
             var datos = JSON.parse(lockedMessage.body); // lockedMessage es el mensaje recuperado de la cola
-            
-            DB_Funtions.newMessage(datos,function(response){
+            var algo = function(response){
+                console.log(response)
                 if(response.success)
                     console.log('Insercion del mensaje en la base de datos con exito')
-                else
-                console.log('El mensaje no se ha insertado en la base de datos')
-            })
+                else{
+                    console.log('El mensaje no se ha insertado en la base de datos')
+                    DB_Funtions.newMessage(datos,algo)
+                }                
+            }
+
+            DB_Funtions.newMessage(datos,algo)
         }
     });
 },800)

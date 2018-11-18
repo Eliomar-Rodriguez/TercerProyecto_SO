@@ -254,7 +254,7 @@ var BackendService = /** @class */ (function () {
         })
             .subscribe(function (data) {
             _this.chats[remoteID] = [];
-            if (data["data"])
+            if (data['success'] && data["data"])
                 data["data"].forEach(function (element) {
                     _this.chats[remoteID].push({
                         id: element.ID_Emiter,
@@ -425,7 +425,7 @@ var MainViewComponent = /** @class */ (function () {
         // Contador para tareas por lote
         this.Contador = 0;
         // Numero maximo de mensajes que se pueden enviar por tarea
-        this.maxCounter = 10000;
+        this.maxCounter = 100;
         // Identifica al usuario actual con que se está conversando
         this.activeUser = "";
         // Se obtiene la información del usuario y se retorna al login si esta no es encontrada

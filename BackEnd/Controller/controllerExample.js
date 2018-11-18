@@ -2,8 +2,6 @@ var logica = require('../Logic/logic')
 //var azureFunctions = require('../Controller/AzureBusService')
 
 exports.newMessage = function(request, response){
-    //console.log('KEMBLY')
-    //console.log(request.body)
     logica.newMessage(request.body, function(data) {
         //console.log(data)
         response.send(data);
