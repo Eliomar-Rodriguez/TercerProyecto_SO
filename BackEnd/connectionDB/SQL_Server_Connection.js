@@ -28,6 +28,10 @@ connection.on('connect', function(err) {
         console.log(err);
     }
 });
+connection.on('error',function(err){
+    console.log(err)
+    connection.reset();
+})
 
 /**
  * Ejecuta un query en la base de datos SQL Server.
@@ -40,6 +44,10 @@ exports.executeRequest = function(request, callback) {
         'use strict';
         var res = [],
             connection = new Connection(config);
+
+        connection.on('error',function(err){
+            console.log(err)
+        })
 
         connection.on('connect', function(err) {
             if (err) {
@@ -63,11 +71,12 @@ exports.executeRequest = function(request, callback) {
                 res.push(row);
             });
 
-            request.on('returnValue', function(parameterName, value, metadata) {
+            /*request.on('returnValue', function(parameterName, value, metadata) {
                 //console.log('\n>>>\nRESPONSE returnValue:');
                 //console.log(res);
                 //console.log(parameterName);
                 //console.log(value);
+                //connection.close();
                 //console.log('>>>');
                 if (parameterName === 'success' && (value === 1 || value === true)) {
                     callback({
@@ -82,7 +91,7 @@ exports.executeRequest = function(request, callback) {
                         error: 400
                     });
                 };
-            });
+            });*/
 
             /**
              * estos dos tipos de evento done se usan ya que hay ocaciones en la que se captura el evento doneProc o el done luego de ejecutar una consulta
@@ -90,6 +99,7 @@ exports.executeRequest = function(request, callback) {
             request.on('done', function (rowCount, more, rows) { // si el tipo de exito es done llena callback
                 //console.log('\n>>>\nRESPONSE done:');
                 //console.log(res);
+                //connection.close();
                 //console.log('>>>');
                 callback({
                     success: true,
@@ -102,6 +112,7 @@ exports.executeRequest = function(request, callback) {
                 //console.log('\n>>>\nRESPONSE doneProc:');
                 //console.log(res);
                 //console.log('>>>');
+                //connection.close();
                 callback({
                     success: true,
                     data: res,
@@ -127,7 +138,11 @@ exports.callProcedure = function (request, callback) {
         'use strict';
         var res = [],
         connection = new Connection(config);
-    
+        
+        connection.on('error',function(err){
+            console.log(err)
+        })
+        
         connection.on('connect', function(err) {
             if (err) {
                 callback({
@@ -156,13 +171,15 @@ exports.callProcedure = function (request, callback) {
             /**
              * evento que captura la respuesta de lo ocurrido en la base de datos
              */
-            /*request.on('returnValue', function(parameterName, value, metadata) {
+            request.on('returnValue', function(parameterName, value, metadata) {
                 console.log('\n>>>\nRESPONSE returnValue:');
                 console.log(res);
-                console.log(parameterName);
-                console.log(value);
+                //connection.close();
                 console.log('>>>');
-                if (parameterName === 'success' && (value === 1 || value === true)) {
+                try {
+                    
+                if (res[0].success != -1 | (parameterName === 'success' && (value === 1 || value === true))) {                    
+                    console.log('>>>');
                     callback({
                         success: true,
                         data: res,
@@ -175,15 +192,19 @@ exports.callProcedure = function (request, callback) {
                         error: 400
                     });
                 };
-            });*/
+                } catch (error) {
+                    console.log(error)
+                }
+            });
     
             /**
              * estos dos tipos de evento done se usan ya que hay ocaciones en la que se captura el evento doneProc o el done luego de ejecutar una consulta
              */        
-            request.on('done', function (rowCount, more, rows) { // si el tipo de exito es done llena callback
+            /*request.on('done', function (rowCount, more, rows) { // si el tipo de exito es done llena callback
                 //console.log('\n>>>\nRESPONSE done:');
                 //console.log(res);
                 //console.log('>>>');
+                //connection.close();
                 callback({
                     success: true,
                     data: res[0],
@@ -195,6 +216,7 @@ exports.callProcedure = function (request, callback) {
                 //console.log('\n>>>\nRESPONSE doneProc:');
                 //console.log(res);
                 //console.log('>>>');
+                connection.close();
                 if (res[0].success) {
                     callback({
                         success: true,
@@ -208,7 +230,7 @@ exports.callProcedure = function (request, callback) {
                         error: 400
                     });
                 };
-            });
+            });*/
             connection.callProcedure(request);
         });
     } catch (error) {
