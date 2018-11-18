@@ -5,17 +5,15 @@ var TYPES = require('tedious').TYPES;
 exports.newMessage = function(datos, callback){
     var algo = null;
     try {
-        console.log('=-=-=-=-=-=-=--')
-        console.log(datos)
         var request = new Request('newMessage', function(err) {
-            console.log(err)
+            //console.log(err)
             if (err) {
-                var msg = (request.error == 1) ? "Error de conexión" : "No se puede insertar el registro";
+                
                 callback({
                     success: false,
-                    error: 'GG',
+                    error: request.error,
                     title: "Error",
-                    message: msg,
+                    message: 'No se puede insertar el registro',
                     type: "error"
                 })
             }
@@ -27,8 +25,6 @@ exports.newMessage = function(datos, callback){
         request.addOutputParameter('success', TYPES.Bit);
     
         sqlServerConnection.callProcedure(request, function(res) {
-            console.log('ioe')
-            console.log(res.data)
             algo = callback(res);
         });        
     } catch (error) {
@@ -48,12 +44,11 @@ exports.selectAllUsers = function(callback){
         var query = 'SELECT ID, username FROM Users';
         var request = new Request(query, function(err) {
             if (err) {
-                var msg = (request.error == 1) ? "Error de conexión" : "No se encontraron registros";
                 callback({
                     success: false,
                     error: request.error,
                     title: "Error",
-                    message: msg,
+                    message: "No se encontraron registros",
                     type: "error"
                 })
             }
@@ -66,29 +61,55 @@ exports.selectAllUsers = function(callback){
     }
 };
 
-exports.login = function(datos, callback){
-    try {
-        var request = new Request('loginUsers', function(err) {
-            console.log(err)
-            if (err) {
-                var msg = (request.error == 1) ? "Error de conexión" : "No se puede comprobar el usuario";
+exports.getAllMessages = function(datos ,callback){
+    var query = 'SELECT TextMessage, ID_Emiter, ID_Receiver FROM ChatMessages WHERE (ID_Emiter = '+datos.ID_Receiver+' AND ID_Receiver = '+datos.ID_Emiter+' ) OR (ID_Emiter = '+datos.ID_Emiter+' AND ID_Receiver = '+datos.ID_Receiver+' );'
+    var request = new Request(query, function(err) {
+        if (err) {
+            try {
                 callback({
                     success: false,
-                    error: 'Ocurrio un error en la base de datos',
+                    error: request.error,
                     title: "Error",
-                    message: msg,
+                    message: "No se encontraron registros",
                     type: "error"
                 })
+            } catch (error) {
+                console.log(error)
             }
-        });
-        request.addParameter('userName', TYPES.VarChar, datos.textMessage);
-        request.addParameter('contrasenia', TYPES.VarChar, datos.contrasenia);
-        
-        request.addOutputParameter('success', TYPES.Bit);
-    
-        sqlServerConnection.executeRequest(request, callback);
+            
+        }
+    });
 
-    } catch (error) {
-        console.log(error);
-    }
+    sqlServerConnection.executeRequest(request, function(res) {
+        callback(res);
+    });
+};
+
+exports.login = function(datos, callback){    
+    var request = new Request('loginUsers', function(err) {
+        console.log(err)
+        if (err) {
+            try {
+                callback({
+                    success: false,
+                    error: request.error,
+                    title: "Error",
+                    message: "No se encontraron registros",
+                    type: "error"
+                })
+            } catch (error) {
+                console.log(error)
+            }
+            
+        }
+    });
+    request.addParameter('userName', TYPES.VarChar, datos.userName);
+    request.addParameter('contrasenia', TYPES.VarChar, datos.contrasenia);
+
+    request.addOutputParameter('success', TYPES.Bit);
+    request.addOutputParameter('ID', TYPES.Int);
+
+    sqlServerConnection.callProcedure(request, function(res) {
+        callback(res);
+    });
 };

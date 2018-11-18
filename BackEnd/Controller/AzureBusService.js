@@ -3,29 +3,26 @@ const azure = require('azure-sb');
 const sbService = azure.createServiceBusService('Endpoint=sb://tercerproyecto.servicebus.windows.net/;SharedAccessKeyName=mensajes;SharedAccessKey=+cT2kgf9U+IPpwqoIHc5rlnYV1fT7XCIiZicQfBDxSY=');
 
 const DB_Funtions = require('../consultPreparer/consultPreparer')
-
-exports.checkForMessages = function(callback) {
+setInterval(function() {
     //isPeekLock=true permite leer los mensajes sin que se eliminen ya que por default apenas se leen de la pila se eliminan
-    sbService.receiveQueueMessage('mensajes', { isPeekLock: true }, function (err, lockedMessage) {
-        console.log('=====Mensajes=====')
-        console.log(lockedMessage)
-        if (err) {
-            if (err == 'No messages to receive') {
-                console.log('No messages');
-            } else {
-                callback({
-                    error: true,
-                    data: null
-                });
+    sbService.receiveQueueMessage('mensajes', { isPeekLock: false }, function (err, lockedMessage) {
+        var datos = null;
+        if (!err) {
+            var datos = JSON.parse(lockedMessage.body); // lockedMessage es el mensaje recuperado de la cola
+            var algo = function(response){
+                console.log(response)
+                if(response.success)
+                    console.log('Insercion del mensaje en la base de datos con exito')
+                else{
+                    console.log('El mensaje no se ha insertado en la base de datos')
+                    DB_Funtions.newMessage(datos,algo)
+                }                
             }
-        } else {
-            callback({
-                error: false,
-                data: lockedMessage
-            });
+
+            DB_Funtions.newMessage(datos,algo)
         }
     });
-}
+},800)
 
 /**
  * Funcion encargada de enviar mensajes a traves de un canal comunicacion
@@ -52,7 +49,7 @@ exports.sendMessages = function(queueName, datos, callback) {
         if (err) {
             console.log('Sent message failed Tx: ', err);
             callback({success: false});
-        } else {// exito con i=la insercion del mensaje en la cola de azure 'mensajes'
+        } else {// exito con i=la insercizon del mensaje en la cola de azure 'mensajes'
             console.log('The message was sent properly.');
             callback({success: true});
         }
