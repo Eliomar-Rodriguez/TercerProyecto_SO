@@ -5,6 +5,7 @@ package ChatMessage;
  */
 
 public class Message {
+    private String name;
     private String text; // message body
     private boolean belongsToCurrentUser; // is this message sent by us?
 

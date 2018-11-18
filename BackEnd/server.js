@@ -21,6 +21,7 @@ const controller = require('./Controller/controllerExample')
 */
 var bodyParser = require('body-parser');
 const helmet = require('helmet')
+var path = require('path');
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
@@ -29,7 +30,9 @@ var express = require('express'),
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use('/', express.static(__dirname + './Public'));
+app.get('/',function(error,response) {
+    response.sendFile(path.resolve(__dirname + '/./Public/index.html'));
+  })
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -39,38 +42,11 @@ app.use(function(req, res, next) {
     next();
 });
 
-var html = '<center>'+
-    '<p style="padding-top:10%">'+
-        '<h2>'+
-            'TEC Sede San Carlos<br>'+
-            'Back-End de tercer proyecto de SO'+
-        '</h2>'+
-        '<b>Desarrolladores:</b> <br>- Kembly Quiros Araya <br>'+
-        '- Eliomar Antonio Rodriguez Arguedas <br>'+
-        '- Alberth Salas Calero <br>'
-        ' <br><br>'+
-        '<h3><b style="color: red"> Atención: </b>Ruta vacía.</h3>'+
-    '</p>'+
-    '</center>';
 
-app.post('/', (req, res) => {    
-    res.send(html);
-})
-app.put('/', (req, res) => {    
-    res.send(html);
-})
-app.get('/', (req, res) => {    
-    res.send(html);
-})
-app.delete('/', (req, res) => {    
-    res.send(html);
-})
-
-app.post('/', controller.post);
-app.get('/', controller.select);
-app.put('/', controller.put);
-app.delete('/', controller.delete);
-
+app.post('/sendMessage', controller.newMessage);
+app.get('/allUsers', controller.allUsers);
+app.post('/getMessagesChat', controller.getAllMessages);
+app.post('/login', controller.login);
 
 /*
 ======================================================================================

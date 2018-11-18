@@ -35,14 +35,14 @@ public class ChatListActivity extends AppCompatActivity {
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startChatActivity(usernameKey);
+                startChatActivity("kemquar11");
             }
         });
     }
 
     public void startChatActivity(String keyUsername){
         Intent intent = new Intent(this, CurrentChatActivity.class);
-        intent.putExtra(getString(R.string.userKey), keyUsername);
+        intent.putExtra(getString(R.string.receiverKey), keyUsername);
         startActivity(intent);
     }
 }
